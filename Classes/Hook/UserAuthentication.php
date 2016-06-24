@@ -13,11 +13,13 @@ namespace PHLU\ShibbolethAuth\Hook;
  * The TYPO3 project - inspiring people to share!
  */
 
-class UserAuthentication {
+class UserAuthentication
+{
 
-	public function backendLogoutHandler() {
-		$_EXTCONF = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['shibboleth_auth']);
-		$_GET['redirect'] = $_EXTCONF['logoutHandler'];
-	}
+    public function backendLogoutHandler()
+    {
+        $_EXTCONF = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['shibboleth_auth']);
+        $_GET['redirect'] = $_EXTCONF['logoutHandler'];
+    }
 
 }
