@@ -52,7 +52,7 @@ class ShibbolethAuthenticationService extends \TYPO3\CMS\Sv\AbstractAuthenticati
     {
         $this->extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
         if (empty($this->extConf['remoteUser'])) $this->extConf['remoteUser'] = 'REMOTE_USER';
-        if (empty($this->extConf['displayName'])) $this->extConf['displayName'] = 'REMOTE_USER';
+        if (empty($this->extConf['displayName'])) $this->extConf['displayName'] = $this->extConf['remoteUser'];
         $this->remoteUser = $_SERVER[$this->extConf['remoteUser']];
         return parent::init();
     }
@@ -186,13 +186,16 @@ class ShibbolethAuthenticationService extends \TYPO3\CMS\Sv\AbstractAuthenticati
     {
         $this->writelog(255, 3, 3, 2, "Importing user %s!", array($this->remoteUser));
 
+        // Name must not be null for DB entry
+        $name = !is_null($this->getServerVar($this->extConf['displayName'])) ? $this->getServerVar($this->extConf['displayName']) : '';
+
         $user = array('crdate' => time(),
             'tstamp' => time(),
             'pid' => $this->extConf['storagePid'],
             'username' => $this->remoteUser,
             'password' => md5(GeneralUtility::shortMD5(uniqid(rand(), TRUE))),
             'email' => $this->getServerVar($this->extConf['mail']),
-            'name' => $this->getServerVar($this->extConf['displayName']),
+            'name' => $name,
             'usergroup' => $this->getFEUserGroups(),
         );
         $this->getDatabaseConnection()->exec_INSERTquery($this->authInfo['db_user']['table'], $user);
@@ -207,12 +210,15 @@ class ShibbolethAuthenticationService extends \TYPO3\CMS\Sv\AbstractAuthenticati
     {
         $this->writelog(255, 3, 3, 2, "Updating user %s!", array($this->remoteUser));
 
+        // Name must not be null for DB entry
+        $name = !is_null($this->getServerVar($this->extConf['displayName'])) ? $this->getServerVar($this->extConf['displayName']) : '';
+
         $where = "username = '" . $this->remoteUser . "' AND pid = " . $this->extConf['storagePid'];
         $user = array('tstamp' => time(),
             'username' => $this->remoteUser,
             'password' => GeneralUtility::shortMD5(uniqid(rand(), TRUE)),
             'email' => $this->getServerVar($this->extConf['mail']),
-            'name' => $this->getServerVar($this->extConf['displayName']),
+            'name' => $name,
             'usergroup' => $this->getFEUserGroups(),
         );
         $this->getDatabaseConnection()->exec_UPDATEquery($this->authInfo['db_user']['table'], $where, $user);
