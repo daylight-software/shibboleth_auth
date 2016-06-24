@@ -2,7 +2,7 @@ Shibboleth Authentication for TYPO3 CMS
 =======================================
 EXT:shibboleth_auth
 
-Fork of the TYPO3 extension shibboleth_auth to fix TYPO3 CMS 6.0+ compatibility issues and shipping with an Extbase-based Login plugin.
+Fork of the TYPO3 extension shibboleth_auth to fix TYPO3 CMS 6.2+ compatibility issues and shipping with an Extbase-based Login plugin.
 
 This extension enables the single sign-on based on Shibboleth for frontend and backend authentication. 
 
@@ -12,8 +12,8 @@ Apache's Shibboleth module has to be installed on the web server before you can 
 
 The following .htaccess rules must be added to the .htaccess file in document root:
 
-    AuthType Shibboleth
-    Require Shibboleth
+    AuthType shibboleth
+    Require shibboleth
 
 And if you use the RealUrl extension, the following must be added to .htaccess file, too:
 
